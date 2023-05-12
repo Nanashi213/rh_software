@@ -1,0 +1,52 @@
+.navigation-bar {
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 5cm;
+  }
+  
+  .rh-software {
+    font-size: 22px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .nav-item {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-right: 10px;
+  }
+  
+  .nav-item:hover {
+    background-color: #f0f0f0;
+    border-radius: 3px;
+  }
+  
+  .login-btn {
+    background-color: white;
+    border: 2px solid black;
+    border-radius: 12px;
+    padding: 5px;
+    padding: auto;
+  }
+  
+  .login-btn:hover {
+    background-color: #f0f0f0;
+  }
+
+  .navigation-bar .navbar-collapse {
+    margin-right: 0;
+  }
+  
+  .navigation-bar .attribution {
+    font-size: 12px;
+    margin-left: 10px;
+    color: #666;
+    display: inline;
+  }
+  
+  .navigation-bar .icono {
+    height: 24px;
+    width: 24px;
+    margin-right: 8px;
+  }
+  

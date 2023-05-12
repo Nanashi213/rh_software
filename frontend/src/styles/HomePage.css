@@ -1,0 +1,30 @@
+.home-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 3rem;
+    margin-top: 3%;
+  }
+  
+  .about-us{
+    margin: 2rem;
+    text-align: start;
+    max-width: 800px;
+  }
+  
+  .ofertas-laborales {
+    margin-left: 2rem;
+    text-align: start;
+    max-width: 800px;
+  }
+  
+  h2 {
+    text-align: start;
+    margin-bottom: 1rem;
+  }
+  
+  p {
+    text-align: start;
+    line-height: 1.5;
+  }
+  
