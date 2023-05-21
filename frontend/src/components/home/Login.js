@@ -1,11 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState , useContext} from 'react';
 import { Container, Form, Button, Col, Row } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import { TokenContext } from '../../TokenContext';
+import axios from "axios";
 
 function LoginF() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const { setToken } = useContext(TokenContext);
+  const [loginForm, setloginForm] = useState({
+    email: "",
+    password: ""
+  })
+
+  const navigate = useNavigate();
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -29,9 +39,34 @@ function LoginF() {
 
     // Aquí puedes realizar la lógica de autenticación si todos los campos son válidos
     if (email !== '' && password !== '') {
-      // Realizar la lógica de autenticación
+      axios({
+        method: "POST",
+        url:"http://localhost:5000/token",
+        data:{
+          email: email,
+          password: password
+         }
+      })
+      .then((response) => {
+        setToken(response.data.access_token);
+        navigate('/main'); // Redirige al usuario a la página de perfil
+      }).catch((error) => {
+        if (error.response) {
+          console.log(error.response)
+          console.log(error.response.status)
+          console.log(error.response.headers)
+          alert("datos errados")}
+      })
+  
+      setloginForm(({
+        email: "",
+        password: ""}))
+  
     }
   };
+
+ 
+  
 
   return (
     <>
@@ -66,7 +101,7 @@ function LoginF() {
                 <Form.Control.Feedback type="invalid">{passwordError}</Form.Control.Feedback>
               </Form.Group>
 
-              <Button variant="dark" type="submit">
+              <Button variant="dark" type="submit" >
                 Iniciar sesión
               </Button>
               <Button className="mr-2" type="submit" variant="dark" href="/">

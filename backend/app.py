@@ -7,6 +7,7 @@ from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, uns
 from datetime import datetime, timedelta, timezone
 
 #MODULS OF THE APP  from modulo1.products import setup_routes as setup_routes_products
+from module_1.controller import setup_routes as setup_routes_module_1
 
 from settings import db
 
@@ -49,7 +50,7 @@ def refresh_expiring_jwts(response):
 def create_token():
     email = request.json.get("email", None)
     password = request.json.get("password", None)
-    if email != "test" or password != "test":
+    if email != "test@gmail.com" or password != "test":
         return {"msg": "Wrong email or password"}, 401
 
     access_token = create_access_token(identity=email)
@@ -65,6 +66,8 @@ def logout():
 
 #FUNTIONS OF MODULOS OF THE APP
 #stup_routes_products(app)
+
+setup_routes_module_1(app)
 
 if __name__ == '__main__':
     with app.app_context():

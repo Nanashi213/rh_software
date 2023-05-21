@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import React from 'react';
 import Home from "./containers/pages/Home.jsx";
+import Main from "./containers/pages/Main.jsx";
 import Error404 from "./containers/errors/Error404";
 import useToken from './components/useToken.js'
 import { TokenContext } from './TokenContext';
@@ -25,8 +26,7 @@ function App() {
       <Route path="/jobs/:id" element={<Home/>} />
       <Route path="/AplicantForm/:id" element={<Home/>} />
       <Route path="/login" element={<Home/>} />
-
-
+      <Route path="/main" element={<Main/>} />
     </Routes>
   </Router>
 </TokenContext.Provider>

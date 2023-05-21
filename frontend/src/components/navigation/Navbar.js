@@ -19,11 +19,6 @@ function NavigationBar (){
       element.scrollIntoView({ behavior: 'smooth' });
     }
   };
-  
-  console.log("la ubicaciones es "+ typeof location.pathname);
-  
-
-  
     return (
       <Navbar expand="lg" bg="light" className="navigation-bar" fixed='top'>
         <Container>
