@@ -22,9 +22,7 @@ function Jobdetails({jobList}) {
               </Card.Body>
             </Card>
           </Col>
-
       </Row>
-
     </Container>
   );
 };

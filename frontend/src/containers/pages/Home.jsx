@@ -1,9 +1,14 @@
 
 import Navbar from "../../components/navigation/Navbar.js";
 import Footer from "../../components/navigation/Footer.js";
-import React from "react";
+import ApliForm from "../../components/home/ApliForm.js";
 import About from "../../components/home/About.js";
 import JobList from "../../components/home/Joblist.js";
+import Jobdetails from "../../components/home/Jobdetails.js";
+import LoginF from "../../components/home/Login.js";
+
+import React from "react";
+import { useLocation, useParams } from 'react-router-dom';
 
 const jobList = [
   {
@@ -51,18 +56,53 @@ const jobList = [
 ]
 
 function Home(){
-      
+  const location = useLocation();
+  const { id } = useParams();
+  console.log('ubicacion'+location.pathname);
+  if(location.pathname === '/'){
     return(
-        <>
-            <Navbar/>
-            <body style={{paddingTop: "40px",paddingBottom: "40px"}}>
-            <About/>
-            <JobList jobLists={jobList} />
-            </body>
-            <Footer/>
-        </>
-
+      <>
+        <Navbar/> 
+        <About/>
+        <JobList jobLists={jobList} />
+        <Footer/>
+      </>
     )
+  }else if(location.pathname === `/jobs/${id}`)
+  {
+    return(
+    <>
+      <Navbar/>
+      <br/>
+      <br/>
+      <br/>
+      <Jobdetails jobList={jobList}/>
+      <Footer/>
+    </>
+    )
+  }else if(location.pathname === `/AplicantForm/${id}`)
+  {
+    return (
+      <>
+        <Navbar/>
+        <br/>
+        <br/>
+        <br/>
+        <ApliForm id={id}/>
+      </>
+    );    
+
+  }else if(location.pathname === `/login`)
+  {
+    return(
+      <>        
+        <br/>
+        <br/>
+        <br/>
+        <LoginF/>
+      </>
+  )
+  }
 }
 
 export default Home;
