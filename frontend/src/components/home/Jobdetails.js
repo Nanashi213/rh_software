@@ -7,6 +7,11 @@ function Jobdetails({jobList}) {
   
   const idjob = id;
   const oferta = jobList.find((oferta) => oferta.id.toString() === idjob);
+
+  if (!oferta) {
+    return <div>Oferta no encontrada</div>;
+  }
+
   return (
     <Container>
         <Row>
@@ -22,9 +27,7 @@ function Jobdetails({jobList}) {
               </Card.Body>
             </Card>
           </Col>
-
       </Row>
-
     </Container>
   );
 };
