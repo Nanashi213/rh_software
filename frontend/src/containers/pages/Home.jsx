@@ -38,6 +38,8 @@ function Home(){
     return(
       <>
         <Navbar/> 
+        <br/>
+        <br/>
         <About/>
         <JobList jobLists={jobList} />
         <Footer/>
