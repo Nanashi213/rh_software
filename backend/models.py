@@ -22,8 +22,8 @@ class Application(db.Model):
 class JobOffer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(80), nullable=False)
-    description = db.Column(db.String(120), nullable=False)
-    requirements = db.Column(db.String(120), nullable=False)
+    description = db.Column(db.String(200), nullable=False)
+    requirements = db.Column(db.String(200), nullable=False)
     publication_date = db.Column(db.DateTime, nullable=False)
     vacancies = db.Column(db.Integer, nullable=False)
     salary = db.Column(db.Float, nullable=False)

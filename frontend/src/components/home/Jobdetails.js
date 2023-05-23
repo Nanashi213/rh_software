@@ -13,7 +13,7 @@ function Jobdetails({jobList}) {
   }
 
   return (
-    <Container>
+    <Container className='mt-3 mb-5'>
         <Row>
           <Col md={12} lg={12}>
             <Card className="mb-4" key={oferta.id}>

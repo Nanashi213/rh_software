@@ -11,6 +11,7 @@ import React,{ useEffect, useState } from "react";
 import axios from "axios";
 import { useLocation, useParams } from 'react-router-dom';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { Container } from "react-bootstrap";
 
 function Home(){
   const [jobList, setJobList] = useState([]);
@@ -38,8 +39,6 @@ function Home(){
     return(
       <>
         <Navbar/> 
-        <br/>
-        <br/>
         <About/>
         <JobList jobLists={jobList} />
         <Footer/>
@@ -50,9 +49,6 @@ function Home(){
     return(
     <>
       <Navbar/>
-      <br/>
-      <br/>
-      <br/>
       <Jobdetails jobList={jobList}/>
       <Footer/>
     </>
@@ -62,21 +58,18 @@ function Home(){
     return (
       <>
         <Navbar/>
-        <br/>
-        <br/>
-        <br/>
         <ApliForm id={id}/>
+        <Footer/>
       </>
     );    
 
   }else if(location.pathname === `/login`)
   {
     return(
-      <>        
-        <br/>
-        <br/>
-        <br/>
+      <>  
+      <Container >      
         <LoginF/>
+      </Container>
       </>
   )
   }

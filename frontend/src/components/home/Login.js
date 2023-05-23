@@ -2,6 +2,7 @@ import React, { useState , useContext} from 'react';
 import { Container, Form, Button, Col, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { TokenContext } from '../../TokenContext';
+import IMG_Login from '../../assets/login_image.webp';
 import axios from "axios";
 
 function LoginF() {
@@ -70,11 +71,11 @@ function LoginF() {
 
   return (
     <>
-      <Row>
-        <Col md="4" className="d-flex align-items-center justify-content-center">
-          <img src="https://via.placeholder.com/500x500" alt="placeholder" width={300} />
+      <Row className="d-flex align-items-center justify-content-center vh-100">
+        <Col md="4" >
+          <img src={IMG_Login} alt="placeholder" width={300} />
         </Col>
-        <Col md="6" className="d-flex align-items-center">
+        <Col md="6" >
           <Container className="mt-5">
             <Form onSubmit={handleSubmit}>
               <Form.Group controlId="formBasicEmail">
@@ -101,10 +102,10 @@ function LoginF() {
                 <Form.Control.Feedback type="invalid">{passwordError}</Form.Control.Feedback>
               </Form.Group>
 
-              <Button variant="dark" type="submit" >
+              <Button variant="dark" type="submit" className='mt-2 me-2'>
                 Iniciar sesión
               </Button>
-              <Button className="mr-2" type="submit" variant="dark" href="/">
+              <Button className="mr-2 mt-2" type="submit" variant="dark" href="/" >
                 Regresar
               </Button>
             </Form>

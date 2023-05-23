@@ -54,7 +54,7 @@ const ApliForm = () => {
   };
 
   return (
-    <Row className="justify-content-center">
+    <Row className="justify-content-center mt-4">
       <Col md={7}>
         <Form onSubmit={handleSubmit}>
           <Form.Group as={Row} className="mb-3">
