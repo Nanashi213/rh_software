@@ -29,7 +29,6 @@ function NavigationBar (){
     })}
 
   
-   console.log(token)
   const handleScrollTo = (id) => {
     const element = document.getElementById(id);
     if (element) {

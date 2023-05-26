@@ -25,7 +25,7 @@ function JobOffersList() {
   const deleteJobOffer = (jobOfferId) => {
     axios({
       method: "DELETE",
-      url:`http://localhost:5000/job_offers/${jobOfferId}`,
+      url:`http://localhost:5000/job_offer/${jobOfferId}`,
   })
   .then((response) => {
     setJobOffers(jobOffers.filter(jobOffer => jobOffer.id !== jobOfferId))
@@ -56,7 +56,7 @@ function JobOffersList() {
               <td>{jobOffer.title}</td>
               <td>{new Date(jobOffer.publication_date).toLocaleDateString()}</td>
               <td>
-                <Button variant="primary" >Edit</Button>{' '}
+                <Button variant="primary" href={`/main/joboffers/${jobOffer.id}`}>Editar</Button>{' '}
                 <Button variant="danger" onClick={() => deleteJobOffer(jobOffer.id)}>Delete</Button>
               </td>
             </tr>

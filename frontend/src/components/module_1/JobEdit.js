@@ -1,23 +1,23 @@
-import React, { useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
-import * as yup from 'yup';
+import React, { useState, useEffect } from 'react';
 import { useFormik } from 'formik';
+import { useParams, Navigate } from 'react-router-dom';
+import * as yup from 'yup';
+import Form from 'react-bootstrap/Form';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
+import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
 import axios from 'axios';
 
+function JobEditForm({ jobList }) {
+  const { id } = useParams();
 
-const Job_offer_form = () => {
+  const [offer, setOffer] = useState(null);
+  
   const [validated, setValidated] = useState(false);
 
-  const currentDate = new Date();
-  const day = String(currentDate.getDate()).padStart(2, '0');
-  const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Los meses en JavaScript comienzan desde 0
-  const year = currentDate.getFullYear();
-  const formattedDate = `${day}/${month}/${year}`;
   const schema = yup.object().shape({
+    id: yup.number().required('Campo obligatorio'),
     title: yup.string().required('Campo obligatorio'),
     description: yup.string().required('Campo obligatorio'),
     requirements: yup.string().required('Campo obligatorio'),
@@ -28,40 +28,49 @@ const Job_offer_form = () => {
 
   const formik = useFormik({
     initialValues: {
-      title: '',
-      description: '',
-      requirements: '',
-      publication_date: formattedDate,
-      vacancies: 0,
-      salary: 0,
+      id: offer?.id || '',
+      title: offer?.title || '',
+      description: offer?.description || '',
+      requirements: offer?.requirements || '',
+      publication_date: offer?.publication_date || '',
+      vacancies: offer?.vacancies || '',
+      salary: offer?.salary || '',
     },
     validationSchema: schema,
     onSubmit: (values) => {
-      axios({
-        method: "POST",
-        url:"http://localhost:5000/job_offer",
-
-        data: {
-          title: values.title,
-          description: values.description,
-          requirements: values.requirements,
-          publication_date: values.publication_date,
-          vacancies: values.vacancies,
-          salary: values.salary
-        }
+      axios.put(`http://localhost:5000/job_offer/${values.id}`, values)
+      .then(response => {
+        console.log(response.data.message);
+        // Aquí puedes realizar cualquier acción adicional después de la actualización exitosa
       })
-      .then((response) => {
-        console.log(response.data);
-      }).catch((error) => {
-        if (error.response) {
-          console.log(error.response)
-          console.log(error.response.status)
-          console.log(error.response.headers)
-        }
-      })
+      .catch(error => {
+        console.error(error);
+        // Aquí puedes manejar los errores de la solicitud PUT
+        alert('Ocurrió un error al actualizar la oferta de trabajo');
+      });
     },
   });
-  
+
+  useEffect(() => {
+    const foundOffer = jobList.find((oferta) => oferta.id.toString() === id);
+    if (foundOffer) {
+      const currentDate = new Date();
+      const day = String(currentDate.getDate()).padStart(2, '0');
+      const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Months in JavaScript start from 0
+      const year = currentDate.getFullYear();
+      const formattedDate = `${day}/${month}/${year}`;
+      foundOffer.publication_date = formattedDate;
+      
+      setOffer(foundOffer);
+      formik.setValues(foundOffer);
+      console.log(foundOffer.id);
+    }
+  }, [id, jobList]);
+
+  if (!offer) {
+    return <div>Oferta no encontrada</div>;
+  }
+
   const handleSubmit = (event) => {
     event.preventDefault();
     formik.handleSubmit(event);
@@ -72,11 +81,14 @@ const Job_offer_form = () => {
       setValidated(false);
     }
   };
+  
+ 
 
   return (
     <Row className="justify-content-center mt-4">
       <Col md={6}>
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit} noValidate validated={validated}>
+          {/* ... El resto de tu formulario ... */}
           <Form.Group as={Row} className="mb-1">
             <Form.Label column sm="3">
               Titulo
@@ -167,7 +179,7 @@ const Job_offer_form = () => {
                 value={formik.values.salary}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                isInvalid={formik.touched.salary && formik.errors.vacancies}
+                isInvalid={formik.touched.salary && formik.errors.salary}
               />
               <Form.Control.Feedback type="invalid">
                 {formik.errors.salary}
@@ -175,10 +187,10 @@ const Job_offer_form = () => {
             </Col>
           </Form.Group>
 
-
           <Form.Group as={Row} className="mb-3">
             <Col sm={{ span: 8, offset: 4 }}>
-              <Button variant='dark' type="submit">Enviar</Button>
+              <Button variant='dark' type="submit">Editar Oferta</Button>{' '}
+              <Button variant="primary" href={`/main/joboffers`}>Regresar</Button>
             </Col>
           </Form.Group>
         </Form>
@@ -187,4 +199,4 @@ const Job_offer_form = () => {
   );
 };
 
-export default Job_offer_form;
+export default JobEditForm;
