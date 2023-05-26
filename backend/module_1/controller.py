@@ -38,3 +38,33 @@ def setup_routes(app):
             job_offer_data['salary'] = job_offer.salary
             output.append(job_offer_data)
         return jsonify(output)
+    @app.route('/job_offer/<int:offer_id>', methods=['PUT'])
+    def update_job_offer(offer_id):
+        data = request.get_json()
+        offer = JobOffer.query.get(offer_id)
+        
+        if not offer:
+            return jsonify({'message': 'Job offer not found'})
+
+        offer.title = data.get('title', offer.title)
+        offer.description = data.get('description', offer.description)
+        offer.requirements = data.get('requirements', offer.requirements)
+        offer.vacancies = data.get('vacancies', offer.vacancies)
+        offer.salary = data.get('salary', offer.salary)
+
+        if 'publication_date' in data:
+            offer.publication_date = datetime.strptime(data['publication_date'], "%d/%m/%Y")
+
+        db.session.commit()
+        return jsonify({'message': 'Job offer updated'})
+
+    @app.route('/job_offer/<int:offer_id>', methods=['DELETE'])
+    def delete_job_offer(offer_id):
+        offer = JobOffer.query.get(offer_id)
+        
+        if not offer:
+            return jsonify({'message': 'Job offer not found'})
+        
+        db.session.delete(offer)
+        db.session.commit()
+        return jsonify({'message': 'Job offer deleted'})
