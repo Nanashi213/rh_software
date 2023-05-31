@@ -21,7 +21,7 @@ app.config['APPLICANT_UPLOAD_FOLDER'] = './ApplicantUploads'
 
 #CONFIGURATIONS LOGIN
 app.config["JWT_SECRET_KEY"] = "prueba"
-app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=35)
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=50)
 jwt = JWTManager(app)
 db.init_app(app)
 CORS(app)

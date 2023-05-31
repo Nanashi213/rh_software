@@ -1,16 +1,37 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect , useContext} from 'react';
 import { useFormik } from 'formik';
-import { useParams, Navigate } from 'react-router-dom';
+import { useParams} from 'react-router-dom';
 import * as yup from 'yup';
-import Form from 'react-bootstrap/Form';
-import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
-import Button from 'react-bootstrap/Button';
+import {Button , Col, Form, Row} from 'react-bootstrap';
 import InputGroup from 'react-bootstrap/InputGroup';
 import axios from 'axios';
 
-function JobEditForm({ jobList }) {
+import { useNavigate } from 'react-router-dom';
+
+import { TokenContext } from '../../TokenContext.js';
+
+
+function JobEditForm() {
+  const { token } = useContext(TokenContext);
+  const navigate = useNavigate();
   const { id } = useParams();
+
+  const [jobOffers, setJobOffers] = useState([ ]);
+
+    useEffect(() => {
+      axios({
+        method: "GET",
+        url: "http://localhost:5000/job_offer",
+      }).then((response) => {
+        setJobOffers(response.data)
+      }).catch((error) => {
+        if (error.response) {
+          console.log(error.response)
+          console.log(error.response.status)
+          console.log(error.response.headers)
+        }
+      })
+    }, []); 
 
   const [offer, setOffer] = useState(null);
   
@@ -27,32 +48,57 @@ function JobEditForm({ jobList }) {
   });
 
   const formik = useFormik({
-    initialValues: {
-      id: offer?.id || '',
-      title: offer?.title || '',
-      description: offer?.description || '',
-      requirements: offer?.requirements || '',
-      publication_date: offer?.publication_date || '',
-      vacancies: offer?.vacancies || '',
-      salary: offer?.salary || '',
+    initialValues: offer ? {
+      id: offer.id || '',
+      title: offer.title || '',
+      description: offer.description || '',
+      requirements: offer.requirements || '',
+      publication_date: offer.publication_date || '',
+      vacancies: offer.vacancies || '',
+      salary: offer.salary || '',
+    } : {
+      id: '',
+      title: '',
+      description: '',
+      requirements: '',
+      publication_date: '',
+      vacancies: '',
+      salary: '',
     },
     validationSchema: schema,
     onSubmit: (values) => {
-      axios.put(`http://localhost:5000/job_offer/${values.id}`, values)
+      axios({
+       method: "PUT",
+       url:`http://localhost:5000/job_offer/${id}`,
+        data: {
+          id: values.id,
+          title: values.title,
+          description: values.description,
+          requirements: values.requirements,
+          publication_date: values.publication_date,
+          vacancies: values.vacancies,
+          salary: values.salary
+        },
+        headers: {
+          Authorization: 'Bearer ' + token
+        } 
+      }
+      )
       .then(response => {
         console.log(response.data.message);
-        // Aquí puedes realizar cualquier acción adicional después de la actualización exitosa
+        alert('Se actualizo la oferta de trabajo');
+        navigate('/main/joboffers');
       })
       .catch(error => {
         console.error(error);
-        // Aquí puedes manejar los errores de la solicitud PUT
         alert('Ocurrió un error al actualizar la oferta de trabajo');
       });
     },
+    enableReinitialize: true,
   });
 
   useEffect(() => {
-    const foundOffer = jobList.find((oferta) => oferta.id.toString() === id);
+    const foundOffer = jobOffers.find((oferta) => oferta.id.toString() === id);
     if (foundOffer) {
       const currentDate = new Date();
       const day = String(currentDate.getDate()).padStart(2, '0');
@@ -60,12 +106,10 @@ function JobEditForm({ jobList }) {
       const year = currentDate.getFullYear();
       const formattedDate = `${day}/${month}/${year}`;
       foundOffer.publication_date = formattedDate;
-      
+  
       setOffer(foundOffer);
-      formik.setValues(foundOffer);
-      console.log(foundOffer.id);
     }
-  }, [id, jobList]);
+  }, [id, jobOffers]);
 
   if (!offer) {
     return <div>Oferta no encontrada</div>;
@@ -87,8 +131,8 @@ function JobEditForm({ jobList }) {
   return (
     <Row className="justify-content-center mt-4">
       <Col md={6}>
+      <h1 className='mb-3'>Detalles oferta de trabajo </h1>
         <Form onSubmit={handleSubmit} noValidate validated={validated}>
-          {/* ... El resto de tu formulario ... */}
           <Form.Group as={Row} className="mb-1">
             <Form.Label column sm="3">
               Titulo

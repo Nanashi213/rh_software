@@ -1,14 +1,23 @@
 from settings import db
+from enum import Enum
+
+
+class CandidateStatus(Enum):
+    APPLIED = "Applied"
+    ACCEPTED = "Accepted"
+    REJECTED = "Rejected"
+    HIRED = "Hired"
 
 class Candidate(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(80), nullable=False)
+    name = db.Column(db.String(80), nullable=False)
     last_name = db.Column(db.String(80), nullable=False)
     id_card = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(120), nullable=False)
     phone = db.Column(db.String(20), nullable=False)
     cv = db.Column(db.String(120), nullable=False)
     certificates = db.Column(db.String(120))
+    status = db.Column(db.Enum(CandidateStatus), nullable=False, default=CandidateStatus.APPLIED)
     job_offer_id = db.Column(db.Integer, db.ForeignKey('job_offer.id'))
 
     def to_dict(self):
@@ -21,23 +30,10 @@ class Candidate(db.Model):
             'phone': self.phone,
             'cv': self.cv,
             'certificates': self.certificates,
+            'status': self.status.value if self.status else None,
             'job_offer_id': self.job_offer_id
         }
 
-
-class Application(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    candidate_id = db.Column(db.Integer, db.ForeignKey('candidate.id'))
-    application_date = db.Column(db.DateTime, nullable=False)
-    status = db.Column(db.String(20), nullable=False)
-
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'candidate_id': self.candidate_id,
-            'application_date': self.application_date.isoformat() if self.application_date else None,
-            'status': self.status
-        }
 
 
 class JobOffer(db.Model):

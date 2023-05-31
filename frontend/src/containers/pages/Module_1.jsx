@@ -1,89 +1,113 @@
 import { useLocation,useParams } from "react-router-dom";
-import Navbar from "../../components/navigation/Navbar.js";
-import Sidebar from "../../components/navigation/Sidebar.js";
-import Footer from "../../components/navigation/Footer.js";
-import JobForm from "../../components/module_1/JobForm.js";
-import JobList from "../../components/module_1/Joblist.js";
-import JobEditForm from "../../components/module_1/JobEdit.js";
-import { useEffect } from "react";
-import axios from "axios";
 import React, { useState } from "react";
-
-
+import Layout from "../Layout.js";
 import {Row, Col, Button} from "react-bootstrap";
 
-function Module_1(){
-    const [jobOffers, setJobOffers] = useState([ ]);
 
-    useEffect(() => {
-      axios({
-        method: "GET",
-        url: "http://localhost:5000/job_offer",
-      }).then((response) => {
-        setJobOffers(response.data)
-      }).catch((error) => {
-        if (error.response) {
-          console.log(error.response)
-          console.log(error.response.status)
-          console.log(error.response.headers)
-        }
-      })
-    }, []); // El array vacío como segundo argumento significa que este efecto se ejecutará una vez cuando el componente se monte.
-    
-  
-const location = useLocation();
-const { id } = useParams();
-const [activeComponent, setActiveComponent] = useState('list');
+import JobForm from "../../components/module_1/JobAdd.js";
+import JobList from "../../components/module_1/Joblist.js";
+import JobEditForm from "../../components/module_1/JobEdit.js";
 
-const showForm = () => setActiveComponent('form');
-const showList = () => setActiveComponent('list');
+import CandidateList from "../../components/module_1/CandidateList.js";
+import CandidateDetails from "../../components/module_1/CandidateDetail.js";
+import CandidateListrev from "../../components/module_1/CandidateListrev.js";
+import TestForm from "../../components/module_1/TestForm.js";
 
 
-if(location.pathname === '/main/joboffers'){
-  return (
-    <>
-        <Row >
-            <Navbar />
-        </Row>
-        <Row>
-            <Sidebar />
-        <Col>
-            <Row className="mb-5">
-            <Col className="d-flex justify-content-center">
-                <Button variant="dark" className="rounded-0" onClick={showList}>Mostrar Ofertas</Button>
-                <Button variant="dark" className="rounded-0" onClick={showForm}>Agregar</Button>
+function Module_1(){ 
+  const location = useLocation();
+  const { id } = useParams();
 
-            </Col>
-            </Row>
-            <Row >
-                {activeComponent === 'form' && <JobForm/>}
-                {activeComponent === 'list' && <JobList/>}
-            </Row>
-        </Col>
-        </Row>
-        <Row>
-            <Footer />
-        </Row>
-    </>
-  )
-}
+  {/* Opciones para ofertas de trabajo */}
+  const [activeComponentoffers, setActiveComponentoffers] = useState('list');
 
-if(location.pathname === `/main/joboffers/${id}`){
+  const showFormoffer = () => setActiveComponentoffers('form');
+  const showListoffer = () => setActiveComponentoffers('list');
+
+  {/* Opciones para candidatos */}
+  const [activeComponentocandidate, setActiveComponentocandidate] = useState('list');
+
+  const showTestcandidate = () => setActiveComponentocandidate('test');
+  const showListcandidate = () => setActiveComponentocandidate('list');
+
+  if(location.pathname === '/main/joboffers'){
     return (
-      <>
-          <Row >
-              <Navbar />
-          </Row>
-          <Row>
-              <Sidebar />
-          <Col>
-            <JobEditForm jobList={jobOffers}/>
+    <Layout>
+      <Col>
+        <Row className="mb-2">
+          <Col className="d-flex justify-content-center">
+            <Button variant="dark" className="rounded-0" onClick={showListoffer}>Mostrar Ofertas</Button>
+            <Button variant="dark" className="rounded-0" onClick={showFormoffer}>Agregar</Button>
+
           </Col>
+        </Row>
+        <Row >
+          {activeComponentoffers === 'form' && <JobForm/>}
+          {activeComponentoffers === 'list' && <JobList/>}
+        </Row>
+      </Col>
+    </Layout>
+    )
+  }else if(location.pathname === `/main/joboffers/${id}`){
+    return (
+      <Layout>
+        <Col>
+          <JobEditForm />
+        </Col>
+      </Layout>
+    )
+  }else if(location.pathname === '/main/candidates'){
+  return(
+    <Layout>
+      <Col>
+        <Row className="mb-5">
+          <Col className="d-flex justify-content-center">
+          <Button variant="dark" className="rounded-0" onClick={showListcandidate}>Sin revisar</Button>
+            <Button variant="dark" className="rounded-0" onClick={showTestcandidate}>Revisados</Button>
+          </Col>
+        </Row>
+        <Row >
+          {activeComponentocandidate === 'test' && <CandidateListrev/>}
+          {activeComponentocandidate === 'list' && <CandidateList/>}
+        </Row>
+      </Col>
+    </Layout>
+  )
+  }else if(location.pathname === `/main/candidates/${id}`){
+  return (
+    <Layout>      
+      <Col>
+        <Row className="mb-5">
+          <Col className="d-flex justify-content-center">
+          </Col>
+        </Row>
+        <Row >
+           <CandidateDetails/>
+        </Row>
+      </Col>
+    </Layout>
+  )
+  }else if(location.pathname === `/main/candidates/test/${id}`){
+    return (
+      <Layout>      
+        <Col>
+          <Row className="mb-5">
+            <Col className="d-flex justify-content-center">
+            </Col>
           </Row>
-          <Row>
-              <Footer />
+          <Row >
+            <TestForm/>
           </Row>
-      </>
+        </Col>
+      </Layout>
+    )
+  }else{
+    return(
+      <Layout>
+        <Col>
+          <h1>404</h1>
+        </Col>
+      </Layout> 
     )
   }
 }

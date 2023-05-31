@@ -1,5 +1,7 @@
 from flask import request, jsonify
 from datetime import datetime
+from flask_jwt_extended import jwt_required
+from flask import send_from_directory
 
 import sys
 sys.path.append('..')
@@ -8,6 +10,7 @@ from models import JobOffer
 
 def setup_routes(app):
     @app.route('/job_offer', methods=['POST'])
+    @jwt_required()
     def create_job_offer():
         data = request.get_json()
         publication_date = datetime.strptime(data['publication_date'], "%d/%m/%Y")
@@ -38,10 +41,11 @@ def setup_routes(app):
             job_offer_data['salary'] = job_offer.salary
             output.append(job_offer_data)
         return jsonify(output)
-    @app.route('/job_offer/<int:offer_id>', methods=['PUT'])
-    def update_job_offer(offer_id):
+    @app.route('/job_offer/<id>', methods=['PUT'])
+    @jwt_required()
+    def update_job_offer(id):
         data = request.get_json()
-        offer = JobOffer.query.get(offer_id)
+        offer = JobOffer.query.get(id)
         
         if not offer:
             return jsonify({'message': 'Job offer not found'})
@@ -58,9 +62,10 @@ def setup_routes(app):
         db.session.commit()
         return jsonify({'message': 'Job offer updated'})
 
-    @app.route('/job_offer/<int:offer_id>', methods=['DELETE'])
-    def delete_job_offer(offer_id):
-        offer = JobOffer.query.get(offer_id)
+    @app.route('/job_offer/<int:id>', methods=['DELETE'])
+    @jwt_required()
+    def delete_job_offer(id):
+        offer = JobOffer.query.get(id)
         
         if not offer:
             return jsonify({'message': 'Job offer not found'})
@@ -68,3 +73,7 @@ def setup_routes(app):
         db.session.delete(offer)
         db.session.commit()
         return jsonify({'message': 'Job offer deleted'})
+    
+    @app.route('/ApplicantUploads/<filename>')
+    def serve_image(filename):
+        return send_from_directory(app.config['APPLICANT_UPLOAD_FOLDER'], filename)
