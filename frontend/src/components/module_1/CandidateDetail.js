@@ -7,7 +7,6 @@ import axios from 'axios';
 function CandidateDetails() {
   const { id } = useParams();
   const [candidate, setCandidate] = useState({ id: 3, name: 'Bob', last_name: 'Smith',phone:'2312312', email: 'bob.smith@example.com', cv:'prueba.pdf', certificates:'prueba.pdf' ,status: 'Applied' });
-  const [numPages, setNumPages] = useState(null);
 
   useEffect(() => {
     axios.get(`http://localhost:5000/candidates/${id}`)

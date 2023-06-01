@@ -10,7 +10,7 @@ function CandidateList() {
     { id: 3, name: 'Bob', last_name: 'Smith', email: 'bob.smith@example.com', status: 'Applied' },
   ]);
 
-  {/*       SOLICITUDES A LA API CON ESTADO ACCEPTED
+  {/*       SOLICITUDES A LA API CON ESTADO ACCEPTED 
   useEffect(() => {
     axios({
         method: "GET",
@@ -26,9 +26,6 @@ function CandidateList() {
   }, []);
   */}
 
-  {/*       SOLICITUDES A LA API PARA ASIGNAR UNA PRUEBA
-  
-  */}
   return (
     <Table striped bordered hover>
       <thead>

@@ -2,34 +2,36 @@ import React from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { Form, Button, Col, Row, Card } from 'react-bootstrap';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 
+function CandidateAffiliationForm (){
+  const { id } = useParams();
+  const [candidate, setCandidate] = useState({ id: 3, name: 'Bob', last_name: 'Smith',phone:'2312312', email: 'bob.smith@example.com', cv:'prueba.pdf', certificates:'prueba.pdf' ,status: 'Applied' });
 
-{/* 
-La primera parte que reciba la información del candidato (nombre apellido , telefono, email )y la muestre en pantalla con un Card incluyendo el 
-resultado de la prueba
-
-Despues un formulario para la afiliacion  y tambien con el salario del candidato
-
-class Affiliation(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    employee_id = db.Column(db.Integer, db.ForeignKey('employee.id'))
-    affiliation_type = db.Column(db.String(80), nullable=False)
-    affiliation_date = db.Column(db.DateTime, nullable=False)
-    details = db.Column(db.String(120), nullable=False)
-
-
-*/}
-
-const CandidateAffiliationForm = ({ candidate }) => {
+  useEffect(() => {
+    axios.get(`http://localhost:5000/hiring/${id}`)
+      .then(response => {
+        setCandidate(response.data);
+      })
+      .catch(error => {
+        console.error('There was an error!', error);
+      });
+  }, [id]);
   const schema = yup.object().shape({
-    affiliation: yup.string().required('Campo obligatorio'),
-    // Agrega aquí más campos si es necesario
+    affiliation_type: yup.string().required('Campo obligatorio'),
+    affiliation_date: yup.date().required('Campo obligatorio'),
+    details: yup.string().required('Campo obligatorio'),
+    salary: yup.number().required('Campo obligatorio'),
   });
 
   const formik = useFormik({
     initialValues: {
-      affiliation: '',
-      // Inicializa aquí más campos si es necesario
+      affiliation_type: '',
+      affiliation_date: '',
+      details: '',
+      salary: '',
     },
     validationSchema: schema,
     onSubmit: (values) => {
@@ -43,29 +45,69 @@ const CandidateAffiliationForm = ({ candidate }) => {
       <Col md={7}>
         <Card className="mb-4">
           <Card.Body>
-            <Card.Title>{candidate.name}</Card.Title>
+            <Card.Title>{candidate.name} {candidate.lastName}</Card.Title>
             <Card.Text>Email: {candidate.email}</Card.Text>
             <Card.Text>Phone: {candidate.phone}</Card.Text>
-            <Card.Text>Status: {candidate.status}</Card.Text>
+            <Card.Text>Test Result: {candidate.result}</Card.Text>
           </Card.Body>
         </Card>
 
         <Form onSubmit={formik.handleSubmit}>
           <Form.Group className="mb-3">
-            <Form.Label>Afiliación</Form.Label>
+            <Form.Label>Tipo de afiliación</Form.Label>
             <Form.Control
               type="text"
-              name="affiliation"
-              value={formik.values.affiliation}
+              name="affiliation_type"
+              value={formik.values.affiliation_type}
               onChange={formik.handleChange}
-              isInvalid={formik.touched.affiliation && formik.errors.affiliation}
+              isInvalid={formik.touched.affiliation_type && formik.errors.affiliation_type}
             />
             <Form.Control.Feedback type="invalid">
-              {formik.errors.affiliation}
+              {formik.errors.affiliation_type}
             </Form.Control.Feedback>
           </Form.Group>
 
-          {/* Agrega aquí más campos de formulario si es necesario */}
+          <Form.Group className="mb-3">
+            <Form.Label>Fecha de afiliación</Form.Label>
+            <Form.Control
+              type="date"
+              name="affiliation_date"
+              value={formik.values.affiliation_date}
+              onChange={formik.handleChange}
+              isInvalid={formik.touched.affiliation_date && formik.errors.affiliation_date}
+            />
+            <Form.Control.Feedback type="invalid">
+              {formik.errors.affiliation_date}
+            </Form.Control.Feedback>
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Detalles</Form.Label>
+            <Form.Control
+              type="text"
+              name="details"
+              value={formik.values.details}
+              onChange={formik.handleChange}
+              isInvalid={formik.touched.details && formik.errors.details}
+            />
+            <Form.Control.Feedback type="invalid">
+              {formik.errors.details}
+            </Form.Control.Feedback>
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Salario</Form.Label>
+            <Form.Control
+              type="number"
+              name="salary"
+              value={formik.values.salary}
+              onChange={formik.handleChange}
+              isInvalid={formik.touched.salary && formik.errors.salary}
+            />
+            <Form.Control.Feedback type="invalid">
+              {formik.errors.salary}
+            </Form.Control.Feedback>
+          </Form.Group>
 
           <Button variant='dark' type="submit">Enviar</Button>
         </Form>

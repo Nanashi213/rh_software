@@ -13,6 +13,9 @@ import CandidateDetails from "../../components/module_1/CandidateDetail.js";
 import CandidateListrev from "../../components/module_1/CandidateListrev.js";
 import TestForm from "../../components/module_1/TestForm.js";
 
+import ContractList from "../../components/module_1/ContractList.js";
+import ContractDetail from "../../components/module_1/ContractDetail.js";
+
 
 function Module_1(){ 
   const location = useLocation();
@@ -97,6 +100,34 @@ function Module_1(){
           </Row>
           <Row >
             <TestForm/>
+          </Row>
+        </Col>
+      </Layout>
+    )
+  }else if(location.pathname === `/main/hiring`){
+    return (
+      <Layout>      
+        <Col>
+          <Row className="mb-5">
+            <Col className="d-flex justify-content-center">
+            </Col>
+          </Row>
+          <Row >
+            <ContractList/>
+          </Row>
+        </Col>
+      </Layout>
+    )
+  }else if(location.pathname === `/main/hiring/${id}`){
+    return (
+      <Layout>      
+        <Col>
+          <Row className="mb-5">
+            <Col className="d-flex justify-content-center">
+            </Col>
+          </Row>
+          <Row >
+            <ContractDetail/>
           </Row>
         </Col>
       </Layout>

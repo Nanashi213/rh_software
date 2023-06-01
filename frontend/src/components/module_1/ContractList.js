@@ -10,7 +10,7 @@ function CandidateList() {
     { id: 3, name: 'Bob', last_name: 'Smith', email: 'bob.smith@example.com', status: 'Applied' },
   ]);
 
-  {/*       SOLICITUDES A LA API CON ESTADO ACCEPTED
+  {/*       SOLICITUDES A LA API con pruebas realizadas  
   useEffect(() => {
     axios({
         method: "GET",
@@ -48,8 +48,8 @@ function CandidateList() {
             <td>{candidate.last_name}</td>
             <td>{candidate.email}</td>
             <td>
-              <Button variant="dark" >{/*Boton par asignar prueba */}
-                Asginar prueba
+              <Button variant="dark" href={`/main/hiring/${candidate.id}`}>
+                Contractar
               </Button>
             </td>
           </tr>

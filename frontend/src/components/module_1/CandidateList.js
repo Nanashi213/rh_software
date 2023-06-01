@@ -10,7 +10,8 @@ function CandidateList() {
     { id: 3, name: 'Bob', last_name: 'Smith', email: 'bob.smith@example.com', status: 'Applied' },
   ]);
 
-  {/*       SOLICITUDES A LA API
+
+  {/*       SOLICITUDES A LA API la idea es que consulte solo los candidatos que esten en estado "Applied"
   useEffect(() => {
     axios({
         method: "GET",
