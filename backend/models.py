@@ -76,7 +76,7 @@ class Test(db.Model):
 
 class Contract(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    employee_id = db.Column(db.Integer, db.ForeignKey('employee.id'))
+    candidate_id = db.Column(db.Integer, db.ForeignKey('candidate.id'))
     start_date = db.Column(db.DateTime, nullable=False)
     end_date = db.Column(db.DateTime)
     salary = db.Column(db.Float, nullable=False)
@@ -84,7 +84,7 @@ class Contract(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
-            'employee_id': self.employee_id,
+            'candidate_id': self.candidate_id,
             'start_date': self.start_date.isoformat() if self.start_date else None,
             'end_date': self.end_date.isoformat() if self.end_date else None,
             'salary': self.salary
@@ -93,7 +93,7 @@ class Contract(db.Model):
 
 class Affiliation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    employee_id = db.Column(db.Integer, db.ForeignKey('employee.id'))
+    candidate_id = db.Column(db.Integer, db.ForeignKey('candidate.id'))
     affiliation_type = db.Column(db.String(80), nullable=False)
     affiliation_date = db.Column(db.DateTime, nullable=False)
     details = db.Column(db.String(120), nullable=False)
@@ -101,7 +101,7 @@ class Affiliation(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
-            'employee_id': self.employee_id,
+            'candidate_id': self.candidate_id,
             'affiliation_type': self.affiliation_type,
             'affiliation_date': self.affiliation_date.isoformat() if self.affiliation_date else None,
             'details': self.details
@@ -127,26 +127,13 @@ class Evaluator(db.Model):
 
 class Employee(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(80), nullable=False)
-    last_name = db.Column(db.String(80), nullable=False)
-    id_card = db.Column(db.String(80), nullable=False)
-    email = db.Column(db.String(120), nullable=False)
-    phone = db.Column(db.String(20), nullable=False)
-    cv = db.Column(db.String(120), nullable=False)
-    certificates = db.Column(db.String(120))
-    hiring_date = db.Column(db.DateTime, nullable=False)
-
+    hiring_date = db.Column(db.Date, nullable=False)
+    candidate_id = db.Column(db.Integer, db.ForeignKey('candidate.id'))
     def to_dict(self):
         return {
             'id': self.id,
-            'first_name': self.first_name,
-            'last_name': self.last_name,
-            'id_card': self.id_card,
-            'email': self.email,
-            'phone': self.phone,
-            'cv': self.cv,
-            'certificates': self.certificates,
-            'hiring_date': self.hiring_date.isoformat() if self.hiring_date else None
+            'hiring_date': self.hiring_date.isoformat() if self.hiring_date else None,
+            'candidate_id': self.candidate_id
         }
 
 
