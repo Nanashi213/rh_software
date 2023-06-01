@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
+import { Form, Button, Col, Row } from 'react-bootstrap';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
 import InputGroup from 'react-bootstrap/InputGroup';
+import { useParams } from 'react-router-dom';
 
 
 const ApliForm = () => {
+  const { id } = useParams();
   const [validated, setValidated] = useState(false);
 
   const schema = yup.object().shape({
+    offer_id: yup.number().required('Campo obligatorio'),
     firstName: yup.string().required('Campo obligatorio'),
     lastName: yup.string().required('Campo obligatorio'),
     cedula: yup.number().required('Campo obligatorio'),
@@ -24,6 +24,7 @@ const ApliForm = () => {
 
   const formik = useFormik({
     initialValues: {
+      offer_id: id,
       firstName: '',
       lastName: '',
       cedula: '',
@@ -57,6 +58,20 @@ const ApliForm = () => {
     <Row className="justify-content-center mt-4">
       <Col md={7}>
         <Form onSubmit={handleSubmit}>
+          <Form.Group className="mb-3">
+          <Form.Label>ID de la oferta</Form.Label>
+          <Form.Control
+            type="number"
+            name="offer_id"
+            value={formik.values.offer_id}
+            onChange={formik.handleChange}
+            isInvalid={formik.touched.offer_id && formik.errors.offer_id}
+            disabled
+          />
+          <Form.Control.Feedback type="invalid">
+            {formik.errors.offer_id}
+          </Form.Control.Feedback>
+        </Form.Group>
           <Form.Group as={Row} className="mb-3">
             <Form.Label column sm="4">
               Primer nombre
