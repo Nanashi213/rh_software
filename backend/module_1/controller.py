@@ -174,14 +174,9 @@ def setup_routes(app):
         return jsonify({'message': 'New test created!', 'test_id': new_test.id}), 201
 
 
-    @app.route('/candidate/<int:id>/test', methods=['GET'])
-    def get_candidate_test(id):
-        candidate = Candidate.query.get(id)
-        if not candidate:
-            return jsonify({'message': 'Candidate not found'}), 404
+    @app.route('/candidates/has_test', methods=['GET'])
+    def get_candidates_with_test():
+        candidates_with_test = Candidate.query.join(Test).filter(Candidate.id == Test.candidate_id).all()
+        candidates_data = [candidate.to_dict() for candidate in candidates_with_test]
 
-        candidate_test = Test.query.filter_by(candidate_id=id).first()
-        if not candidate_test:
-            return jsonify({'message': 'Candidate has no test'}), 404
-
-        return jsonify(candidate_test.to_dict()), 200
+        return jsonify(candidates_data), 200
