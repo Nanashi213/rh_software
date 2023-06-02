@@ -23,7 +23,7 @@ class Candidate(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
-            'first_name': self.first_name,
+            'name': self.name,
             'last_name': self.last_name,
             'id_card': self.id_card,
             'email': self.email,

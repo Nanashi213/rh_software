@@ -64,6 +64,8 @@ def logout():
     return response
 
 
+
+
 #FUNTIONS OF MODULOS OF THE APP
 #stup_routes_products(app)
 
