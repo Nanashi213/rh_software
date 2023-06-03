@@ -8,6 +8,7 @@ import { TokenContext } from '../../TokenContext.js';
 function CandidateDetails() {
   const { token } = useContext(TokenContext);
   const { id } = useParams();
+
   const [candidate, setCandidate] = useState();
   const navigate = useNavigate();
 

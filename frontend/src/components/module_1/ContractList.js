@@ -47,7 +47,9 @@ function ContractList() {
             <td>{candidate.last_name}</td>
             <td>{candidate.email}</td>
             <td>
-              <Button variant="dark" >{/*Boton par asignar prueba */}
+
+              <Button variant="dark" href={`/main/hiring/${candidate.id}`}>
+
                 Contractar
               </Button>
             </td>

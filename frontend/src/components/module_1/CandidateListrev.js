@@ -8,6 +8,7 @@ function CandidateList() {
   const [candidates, setCandidates] = useState([]);
 
     useEffect(() => {
+
     axios({
         method: "GET",
         url: "http://localhost:5000//candidates/accepted",
