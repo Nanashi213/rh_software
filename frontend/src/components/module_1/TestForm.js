@@ -7,7 +7,7 @@ import axios from 'axios';
 import { TokenContext } from '../../TokenContext';
 
 const TestForm = () => {
-  const token = useContext(TokenContext);
+  const {token} = useContext(TokenContext);
   const navigate = useNavigate();
   const [validated, setValidated] = useState(false);
 
@@ -37,6 +37,9 @@ const TestForm = () => {
           test_date: '2021-10-10',
           result: values.result
         },
+        headers: {
+          Authorization: 'Bearer ' + token
+        }
       }).then((response) => {
         console.log(response.data);
         navigate('/main/candidates');
@@ -58,7 +61,7 @@ const TestForm = () => {
   return (
     <Row className="justify-content-center mt-4">
       <Col md={7}>
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit} validated={validated}>
         <Form.Group className="mb-3">
           <Form.Label>ID del candidato</Form.Label>
           <Form.Control

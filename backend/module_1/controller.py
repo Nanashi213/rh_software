@@ -164,7 +164,6 @@ def setup_routes(app):
         return jsonify({'message': 'Status updated successfully', 'new_status': new_status}), 200
   
     @app.route('/test', methods=['POST'])
-    @jwt_required()
     def create_test():
         data = request.get_json()
         candidate_id = data.get('candidate_id')
