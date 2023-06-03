@@ -24,7 +24,7 @@ app.config["JWT_SECRET_KEY"] = "prueba"
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=50)
 jwt = JWTManager(app)
 db.init_app(app)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 
 #LOGIN     
@@ -62,6 +62,8 @@ def logout():
     response = jsonify({"msg": "logout successful"})
     unset_jwt_cookies(response)
     return response
+
+
 
 
 #FUNTIONS OF MODULOS OF THE APP
