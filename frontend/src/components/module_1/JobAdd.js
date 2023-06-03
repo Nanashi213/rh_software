@@ -1,7 +1,8 @@
 import React, { useState, useContext } from 'react';
-import {Button , Col, Form, Row, InputGroup} from 'react-bootstrap'
+import {Button , Col, Form, Row} from 'react-bootstrap'
 import * as yup from 'yup';
 import { useFormik } from 'formik';
+import InputGroup from 'react-bootstrap/InputGroup';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -69,6 +70,7 @@ const Job_offer_form = () => {
   
   const handleSubmit = (event) => {
     event.preventDefault();
+    formik.handleSubmit(event);
     if (formik.isValid) {
       setValidated(true);
       formik.submitForm();

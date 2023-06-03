@@ -16,6 +16,7 @@ import TestForm from "../../components/module_1/TestForm.js";
 import ContractList from "../../components/module_1/ContractList.js";
 import ContractDetail from "../../components/module_1/ContractDetail.js";
 
+
 function Module_1(){ 
   const location = useLocation();
   const { id } = useParams();
@@ -103,7 +104,7 @@ function Module_1(){
         </Col>
       </Layout>
     )
-  else if(location.pathname === '/main/hiring'){
+  }else if(location.pathname === `/main/hiring`){
     return (
       <Layout>      
         <Col>

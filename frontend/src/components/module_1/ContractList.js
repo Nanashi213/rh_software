@@ -1,20 +1,21 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Table, Button } from 'react-bootstrap';
-import { TokenContext } from '../../TokenContext';
 
-function ContractList() {
-  const {token} = useContext(TokenContext);
-  const [candidates, setCandidates] = useState([]);
+function CandidateList() {
+  const [candidates, setCandidates] = useState([
+    { id: 1, name: 'John', last_name: 'Doe', email: 'john.doe@example.com', status: 'Applied' },
+    { id: 2, name: 'Jane', last_name: 'Doe', email: 'jane.doe@example.com', status: 'Applied' },
+    { id: 3, name: 'Bob', last_name: 'Smith', email: 'bob.smith@example.com', status: 'Applied' },
+    { id: 3, name: 'Bob', last_name: 'Smith', email: 'bob.smith@example.com', status: 'Applied' },
+  ]);
 
+  {/*       SOLICITUDES A LA API con pruebas realizadas  
   useEffect(() => {
     axios({
         method: "GET",
-        url: "http://localhost:5000/candidates/has_test",
-        headers: {
-          Authorization: 'Bearer ' + token,
-        },
-
+        url: "http://localhost:5000/candidate",
+        
     })
       .then(response => {
         setCandidates(response.data);
@@ -23,7 +24,7 @@ function ContractList() {
         console.error('There was an error!', error);
       });
   }, []);
-
+  */}
 
   {/*       SOLICITUDES A LA API PARA ASIGNAR UNA PRUEBA
   
@@ -47,9 +48,7 @@ function ContractList() {
             <td>{candidate.last_name}</td>
             <td>{candidate.email}</td>
             <td>
-
               <Button variant="dark" href={`/main/hiring/${candidate.id}`}>
-
                 Contractar
               </Button>
             </td>
@@ -60,4 +59,4 @@ function ContractList() {
   );
 }
 
-export default ContractList;
+export default CandidateList;

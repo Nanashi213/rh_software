@@ -1,31 +1,31 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Table, Button } from 'react-bootstrap';
-import { TokenContext } from '../../TokenContext.js';
 
 function CandidateList() {
-  const { token } = useContext(TokenContext);
-  const [candidates, setCandidates] = useState([]);
+  const [candidates, setCandidates] = useState([
+    { id: 1, name: 'John', last_name: 'Doe', email: 'john.doe@example.com', status: 'Applied' },
+    { id: 2, name: 'Jane', last_name: 'Doe', email: 'jane.doe@example.com', status: 'Applied' },
+    { id: 3, name: 'Bob', last_name: 'Smith', email: 'bob.smith@example.com', status: 'Applied' },
+    { id: 3, name: 'Bob', last_name: 'Smith', email: 'bob.smith@example.com', status: 'Applied' },
+  ]);
 
 
+  {/*       SOLICITUDES A LA API la idea es que consulte solo los candidatos que esten en estado "Applied"
   useEffect(() => {
     axios({
         method: "GET",
-        url: "http://localhost:5000/candidates/applied",
-        headers: {
-          Authorization: 'Bearer ' + token
-        },
-    }).then((response) => {
-      setCandidates(response.data)
-    }).catch((error) => {
-      if (error.response) {
-        console.log(error.response)
-        console.log(error.response.status)
-        console.log(error.response.headers)
-      }
+        url: "http://localhost:5000/candidate",
+        
     })
-  }, [token]); // El array vacío como segundo argumento significa que este efecto se ejecutará una vez cuando el componente se monte.
-  
+      .then(response => {
+        setCandidates(response.data);
+      })
+      .catch(error => {
+        console.error('There was an error!', error);
+      });
+  }, []);
+  */}
   return (
     <Table striped bordered hover>
       <thead>
