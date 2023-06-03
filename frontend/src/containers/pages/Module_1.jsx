@@ -103,6 +103,7 @@ function Module_1(){
         </Col>
       </Layout>
     )
+  }
   else if(location.pathname === '/main/hiring'){
     return (
       <Layout>      
