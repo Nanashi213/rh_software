@@ -1,10 +1,16 @@
-import React from 'react';
+import React, {useContext, useState}from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { Form, Button, Col, Row } from 'react-bootstrap';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { TokenContext } from '../../TokenContext';
 
 const TestForm = () => {
+  const token = useContext(TokenContext);
+  const navigate = useNavigate();
+  const [validated, setValidated] = useState(false);
+
   const { id } = useParams();
   const schema = yup.object().shape({
     candidate_id: yup.number().required('Campo obligatorio'),
@@ -22,15 +28,37 @@ const TestForm = () => {
     },
     validationSchema: schema,
     onSubmit: (values) => {
-      // Aquí puedes realizar las acciones de envío o llamadas a la API
-      console.log(values);
-    },
+      axios({
+        method: 'POST',
+        url: 'http://localhost:5000/test',
+        data: {
+          candidate_id: values.candidate_id, // Aquí es donde deberías enviar 'candidate_id'
+          test_type: values.test_type,
+          test_date: '2021-10-10',
+          result: values.result
+        },
+      }).then((response) => {
+        console.log(response.data);
+        navigate('/main/candidates');
+      }).catch((error) => {
+        console.error(error);
+      });}
+      
   });
 
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (formik.isValid) {
+      setValidated(true);
+      formik.submitForm();
+    } else {
+      setValidated(false);
+    }
+  };
   return (
     <Row className="justify-content-center mt-4">
       <Col md={7}>
-        <Form onSubmit={formik.handleSubmit}>
+        <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3">
           <Form.Label>ID del candidato</Form.Label>
           <Form.Control

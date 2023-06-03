@@ -1,13 +1,10 @@
-from flask import request, jsonify
+from flask import request, jsonify, send_from_directory, jsonify, request
 from datetime import datetime
 from flask_jwt_extended import jwt_required
-from flask import send_from_directory
-from models import Test
-from models import Candidate, CandidateStatus,db
-from datetime import datetime
-from flask import Flask, jsonify, request
-from flask_sqlalchemy import SQLAlchemy
-from flask_jwt_extended import JWTManager, jwt_required, create_access_token
+from models import Test, Candidate, CandidateStatus,db
+from sqlalchemy import exists, not_
+import os
+import uuid
 import sys
 sys.path.append('..')
 from settings import db
@@ -82,55 +79,75 @@ def setup_routes(app):
     @app.route('/ApplicantUploads/<filename>')
     def serve_image(filename):
         return send_from_directory(app.config['APPLICANT_UPLOAD_FOLDER'], filename)
+    
+
     @app.route('/candidate', methods=['POST'])
-    @jwt_required()
     def create_candidate():
-        data = request.get_json()
+        cv_file = request.files['cv']
+        cert_file = request.files['certificates']
+
+        # Guardar archivo de CV con nombre único
+        _, cv_ext = os.path.splitext(cv_file.filename)
+        unique_cv_filename = f"{uuid.uuid4().hex}{cv_ext}"
+        cv_file.save(os.path.join(app.config['APPLICANT_UPLOAD_FOLDER'], unique_cv_filename))
+
+        # Guardar archivo de certificado con nombre único
+        _, cert_ext = os.path.splitext(cert_file.filename)
+        unique_cert_filename = f"{uuid.uuid4().hex}{cert_ext}"
+        cert_file.save(os.path.join(app.config['APPLICANT_UPLOAD_FOLDER'], unique_cert_filename))
+
         new_candidate = Candidate(
-            name=data['name'],
-            last_name=data['last_name'],
-            id_card=data['id_card'],
-            email=data['email'],
-            phone=data['phone'],
-            cv=data['cv'],
-            certificates=data.get('certificates'), # Este campo podría ser opcional, por lo que usamos data.get()
-            status=CandidateStatus[data.get('status', 'APPLIED').upper()], # Aquí asumimos que si el estado no está especificado, es 'Applied'
-            job_offer_id=data.get('job_offer_id') # Este también podría ser opcional
+            name=request.form['name'],
+            last_name=request.form['last_name'],
+            id_card=request.form['id_card'],
+            email=request.form['email'],
+            phone=request.form['phone'],
+            cv=unique_cv_filename,
+            certificates=unique_cert_filename,
+            status='APPLIED',
+            job_offer_id=request.form.get('job_offer_id')
         )
         db.session.add(new_candidate)
         db.session.commit()
         return jsonify({'message': 'New candidate created!', 'candidate_id': new_candidate.id}), 201
     
-    @app.route('/candidates/accepted', methods=['GET'])
-    def get_accepted_candidates():
-        accepted_candidates = Candidate.query.filter_by(status=CandidateStatus.ACCEPTED).all()
-        accepted_candidates = [candidate.to_dict() for candidate in accepted_candidates]
-        return jsonify(accepted_candidates), 200
-    
-
     @app.route('/candidates/applied', methods=['GET'])
+    @jwt_required()
     def get_applied_candidates():
         applied_candidates = Candidate.query.filter_by(status=CandidateStatus.APPLIED).all()
         applied_candidates = [candidate.to_dict() for candidate in applied_candidates]
         return jsonify(applied_candidates), 200
     
+    @app.route('/candidates/accepted', methods=['GET'])
+    @jwt_required()
+    def get_accepted_candidates():
+        # Subquery for tests related to a candidate
+        subquery = exists().where(Test.candidate_id==Candidate.id)
+
+        # Query for candidates with status of ACCEPTED and no related test
+        accepted_candidates = Candidate.query.filter(
+            Candidate.status==CandidateStatus.ACCEPTED,
+            not_(subquery)
+        ).all()
+
+        accepted_candidates = [candidate.to_dict() for candidate in accepted_candidates]
+        return jsonify(accepted_candidates), 200
     
     @app.route('/candidate/<int:id>', methods=['GET'])
+    @jwt_required()
     def get_candidate_by_id(id):
         candidate = Candidate.query.get(id)
         if candidate is None:
             return jsonify({'message': 'Candidate not found'}), 404
         return jsonify(candidate.to_dict()), 200
     
-    @app.route('/candidate/<int:id>/status', methods=['PUT'])
+    @app.route('/candidate/status/<int:id>', methods=['PUT'])
     def change_candidate_status(id):
         data = request.get_json()
         new_status = data.get('status')
-
         # Comprobar que se haya proporcionado un nuevo estado
         if new_status is None:
             return jsonify({'message': 'No status provided'}), 400
-
         # Comprobar que el nuevo estado es válido
         if new_status not in CandidateStatus.__members__:
             return jsonify({'message': 'Invalid status'}), 400
