@@ -1,7 +1,7 @@
 from flask import request, jsonify, send_from_directory, jsonify, request
 from datetime import datetime
 from flask_jwt_extended import jwt_required
-from models import Test, Candidate, CandidateStatus,db
+from models import Test, Candidate, CandidateStatus, Contract, Affiliation
 from sqlalchemy import exists, not_
 import os
 import uuid
@@ -164,6 +164,7 @@ def setup_routes(app):
         return jsonify({'message': 'Status updated successfully', 'new_status': new_status}), 200
   
     @app.route('/test', methods=['POST'])
+    @jwt_required()
     def create_test():
         data = request.get_json()
         candidate_id = data.get('candidate_id')
@@ -191,8 +192,61 @@ def setup_routes(app):
 
 
     @app.route('/candidates/has_test', methods=['GET'])
+    @jwt_required()
     def get_candidates_with_test():
-        candidates_with_test = Candidate.query.join(Test).filter(Candidate.id == Test.candidate_id).all()
+        candidates_with_test = Candidate.query.join(Test).filter(Candidate.id == Test.candidate_id, Candidate.status == 'ACCEPTED').all()
         candidates_data = [candidate.to_dict() for candidate in candidates_with_test]
 
         return jsonify(candidates_data), 200
+
+    @app.route('/hiring/<int:id>', methods=['GET'])
+    @jwt_required()
+    def get_candidate_id(id):
+        candidate = Candidate.query.get(id)
+        if candidate is None:
+            return jsonify({'message': 'Candidate not found'}), 404
+
+        # Obtén las pruebas asociadas con el candidato
+        tests = Test.query.filter_by(candidate_id=id).all()
+
+        # Convierte los objetos de prueba en diccionarios para que puedan ser devueltos como JSON
+        tests = [test.to_dict() for test in tests]
+
+        # Añade los resultados de las pruebas al diccionario del candidato
+        candidate_dict = candidate.to_dict()
+        candidate_dict['tests'] = tests
+
+        return jsonify(candidate_dict), 200
+    
+    @app.route('/create_contract_and_affiliation', methods=['POST'])
+    @jwt_required()
+    def create_contract_and_affiliation():
+        data = request.get_json()
+        affiliation_str = data.get('affiliation_date')
+        affiliation_date = datetime.strptime(affiliation_str, "%Y-%m-%d")
+        # Crear el contrato
+        contract = Contract(candidate_id=data['candidate_id'], salary=data['salary'], start_date=datetime.now())
+        db.session.add(contract)
+
+        # Crear la afiliación
+        affiliation = Affiliation(candidate_id=data['candidate_id'], affiliation_type=data['affiliation_type'], affiliation_date=affiliation_date, details=data['details'])
+        db.session.add(affiliation)
+
+        db.session.commit()
+
+        return jsonify({'message': 'Contract and affiliation created successfully'}), 201
+    
+    @app.route('/contracts', methods=['GET'])
+    def get_contracts():
+        contracts = Contract.query.all()
+        contracts = [contract.to_dict() for contract in contracts]
+        return jsonify(contracts), 200
+    
+    @app.route('/affiliations', methods=['GET'])
+    def get_affiliations():
+        affiliations = Affiliation.query.all()
+        affiliations = [affiliation.to_dict() for affiliation in affiliations]
+        return jsonify(affiliations), 200
+    
+    
+

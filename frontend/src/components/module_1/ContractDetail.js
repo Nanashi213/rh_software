@@ -1,24 +1,35 @@
-import React from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { Form, Button, Col, Row, Card } from 'react-bootstrap';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { TokenContext } from '../../TokenContext.js';
 
-function CandidateAffiliationForm (){
+
+function ContractDetail (){
+  const { token } = useContext(TokenContext);
+  const navigate = useNavigate();
   const { id } = useParams();
-  const [candidate, setCandidate] = useState({ id: 3, name: 'Bob', last_name: 'Smith',phone:'2312312', email: 'bob.smith@example.com', cv:'prueba.pdf', certificates:'prueba.pdf' ,status: 'Applied' });
+  const [validated, setValidated] = useState(false);
+  const [candidate, setCandidate] = useState([]);
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/hiring/${id}`)
-      .then(response => {
+    axios({
+      method:"GET",
+      url: `http://localhost:5000/hiring/${id}`,
+      headers: {
+        Authorization: 'Bearer ' + token
+      }
+    }
+    ).then(response => {
         setCandidate(response.data);
       })
       .catch(error => {
         console.error('There was an error!', error);
       });
   }, [id]);
+
   const schema = yup.object().shape({
     affiliation_type: yup.string().required('Campo obligatorio'),
     affiliation_date: yup.date().required('Campo obligatorio'),
@@ -35,10 +46,64 @@ function CandidateAffiliationForm (){
     },
     validationSchema: schema,
     onSubmit: (values) => {
-      // Aquí puedes realizar las acciones de envío o llamadas a la API
-      console.log(values);
+      axios({
+        method: "POST",
+        url: "http://localhost:5000/create_contract_and_affiliation",
+        data: {
+          candidate_id: id,
+          salary: values.salary,
+          affiliation_type: values.affiliation_type,
+          affiliation_date: '2021-10-10',
+          details: values.details
+        },
+        headers: {
+          Authorization: 'Bearer ' + token
+        }
+      }).then(response => {
+        console.log(response.data);
+      }).catch(error => {
+        console.error('There was an error!', error);
+      });
+    changeStatus('HIRED')
     },
   });
+
+
+  const changeStatus = (status) => {
+    axios({
+      method: "PUT",
+      url:`http://localhost:5000//candidate/status/${id}`,
+      data: {
+        status: status
+        },
+      headers: {
+        Authorization: 'Bearer ' + token
+    }
+  })
+  .then((response) => {
+    navigate('/main/hiring')
+    console.log('Candidate status changed', response.data)
+  }).catch((error) => {
+    if (error.response) {
+      console.log(error.response)
+      console.log(error.response.status)
+      console.log(error.response.headers)
+      alert(error.response.data.message)
+      }
+  })};
+
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (formik.isValid) {
+      setValidated(true);
+      formik.submitForm();
+    } else {
+      setValidated(false);
+    }
+  };
+
+  
 
   return (
     <Row className="justify-content-center mt-4">
@@ -48,11 +113,17 @@ function CandidateAffiliationForm (){
             <Card.Title>{candidate.name} {candidate.lastName}</Card.Title>
             <Card.Text>Email: {candidate.email}</Card.Text>
             <Card.Text>Phone: {candidate.phone}</Card.Text>
-            <Card.Text>Test Result: {candidate.result}</Card.Text>
+            {candidate.tests && candidate.tests.map((test, index) => (
+              <div key={index}>
+                <Card.Text>Test ID: {test.id}</Card.Text>
+                <Card.Text>Test Name: {test.test_type}</Card.Text>
+                <Card.Text>Test Result: {test.result}</Card.Text>
+              </div>
+            ))}
           </Card.Body>
         </Card>
 
-        <Form onSubmit={formik.handleSubmit}>
+        <Form onSubmit={handleSubmit} noValidate validated={validated}>
           <Form.Group className="mb-3">
             <Form.Label>Tipo de afiliación</Form.Label>
             <Form.Control
@@ -109,11 +180,13 @@ function CandidateAffiliationForm (){
             </Form.Control.Feedback>
           </Form.Group>
 
-          <Button variant='dark' type="submit">Enviar</Button>
+          <Button variant='success' type="submit">Enviar</Button>{' '}
+          <Button variant="danger" onClick={() => changeStatus('REJECTED')}>Rechazar</Button>{'  '}
+          <Button variant="dark" href="/main/hiring">Regresar</Button>
         </Form>
       </Col>
     </Row>
   );
 };
 
-export default CandidateAffiliationForm;
+export default ContractDetail;

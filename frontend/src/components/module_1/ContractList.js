@@ -25,9 +25,6 @@ function ContractList() {
   }, []);
 
 
-  {/*       SOLICITUDES A LA API PARA ASIGNAR UNA PRUEBA
-  
-  */}
   return (
     <Table striped bordered hover>
       <thead>
