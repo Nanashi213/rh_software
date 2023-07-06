@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { Container, Table, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { TokenContext } from '../../TokenContext.js';
+
 
 function JobOffersList() {
+  const { token } = useContext(TokenContext);
   const [jobOffers, setJobOffers] = useState([ ]);
 
   useEffect(() => {
@@ -26,6 +29,9 @@ function JobOffersList() {
     axios({
       method: "DELETE",
       url:`http://localhost:5000/job_offer/${jobOfferId}`,
+      headers: {
+        Authorization: 'Bearer ' + token
+      } ,
   })
   .then((response) => {
     setJobOffers(jobOffers.filter(jobOffer => jobOffer.id !== jobOfferId))
@@ -39,14 +45,15 @@ function JobOffersList() {
   };
 
   return (
-    <Container>
+    <Container className='justify-content-center'>
+      <h1 className='mb-3'>Ofertas de trabajo </h1>
       <Table striped bordered hover>
         <thead>
           <tr>
             <th>#</th>
-            <th>Title</th>
-            <th>Publication Date</th>
-            <th>Actions</th>
+            <th>Titulo</th>
+            <th>Fecha de publicación</th>
+            <th>Opciones</th>
           </tr>
         </thead>
         <tbody>
@@ -56,8 +63,8 @@ function JobOffersList() {
               <td>{jobOffer.title}</td>
               <td>{new Date(jobOffer.publication_date).toLocaleDateString()}</td>
               <td>
-                <Button variant="primary" href={`/main/joboffers/${jobOffer.id}`}>Editar</Button>{' '}
-                <Button variant="danger" onClick={() => deleteJobOffer(jobOffer.id)}>Delete</Button>
+                <Button variant="dark" href={`/main/joboffers/${jobOffer.id}`}>Ver detalles</Button>{' '}
+                <Button variant="dark" onClick={() => deleteJobOffer(jobOffer.id)}>Eliminar</Button>
               </td>
             </tr>
           ))}

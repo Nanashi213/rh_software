@@ -19,8 +19,11 @@ function Jobdetails({jobList}) {
             <Card className="mb-4" key={oferta.id}>
               <Card.Body>
                 <Card.Title>{oferta.title}</Card.Title>
+                <Card.Subtitle className="mb-2 text-muted">Descripción</Card.Subtitle>
                 <Card.Text>{oferta.description}</Card.Text>
+                <Card.Subtitle className="mb-2 text-muted">Requerimientos</Card.Subtitle>
                 <Card.Text>{oferta.requirements}</Card.Text>
+                <Card.Subtitle className="mb-2 text-muted">Salario</Card.Subtitle>
                 <Card.Text>{oferta.salary}</Card.Text>
                 <Button  className='mr-2' variant="dark" href="/">Regresar</Button>
                 <Button className='ml-2' variant="dark"  href={`/AplicantForm/${id}`}>Postularse</Button>

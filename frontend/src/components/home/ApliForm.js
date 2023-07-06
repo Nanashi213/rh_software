@@ -1,50 +1,62 @@
-import React, { useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
+import React, { useState} from 'react';
+import { Form, Button, Col, Row, InputGroup  } from 'react-bootstrap';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
-import InputGroup from 'react-bootstrap/InputGroup';
+import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 
 const ApliForm = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
   const [validated, setValidated] = useState(false);
 
   const schema = yup.object().shape({
-    firstName: yup.string().required('Campo obligatorio'),
-    lastName: yup.string().required('Campo obligatorio'),
-    cedula: yup.number().required('Campo obligatorio'),
+    job_offer_id: yup.number().required('Campo obligatorio'),
+    name: yup.string().required('Campo obligatorio'),
+    last_name: yup.string().required('Campo obligatorio'),
+    id_card: yup.number().required('Campo obligatorio'),
     email: yup.string().email('Email inválido').required('Campo obligatorio'),
-    phonenumber: yup.number().required('Campo obligatorio'),
-    CV: yup.mixed().required('Campo obligatorio'),
+    phone: yup.number().required('Campo obligatorio'),
+    cv: yup.mixed().required('Campo obligatorio'),
     certificates: yup.mixed().nullable(),
     terms: yup.bool().oneOf([true], 'Debe aceptar los términos y condiciones').required('Campo obligatorio'),
   });
 
   const formik = useFormik({
     initialValues: {
-      firstName: '',
-      lastName: '',
-      cedula: '',
+      job_offer_id: id,
+      name: '',
+      last_name: '',
+      id_card: '',
       email: '',
-      phonenumber: '',
-      CV: null,
+      phone: '',
+      cv: null,
       certificates: null,
       terms: false,
     },
     validationSchema: schema,
     onSubmit: (values) => {
-      // Aquí puedes realizar las acciones de envío o llamadas a la API
-      console.log(values);
+      axios({
+        method: 'POST',
+        url: 'http://localhost:5000/candidate',
+        data: values,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      .then((response) => {
+        console.log(response.data);
+        navigate('/');
+      })
+      .catch((error) => {
+        console.error(error);
+      });
     },
   });
-
+  
   const handleSubmit = (event) => {
     event.preventDefault();
-
-    formik.handleSubmit(event);
-
     if (formik.isValid) {
       setValidated(true);
       formik.submitForm();
@@ -56,7 +68,21 @@ const ApliForm = () => {
   return (
     <Row className="justify-content-center mt-4">
       <Col md={7}>
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit} noValidate validated={validated} >
+          <Form.Group className="mb-3">
+          <Form.Label>ID de la oferta</Form.Label>
+          <Form.Control
+            type="number"
+            name="job_offer_id"
+            value={formik.values.job_offer_id}
+            onChange={formik.handleChange}
+            isInvalid={formik.touched.job_offer_id && formik.errors.job_offer_id}
+            disabled
+          />
+          <Form.Control.Feedback type="invalid">
+            {formik.errors.job_offer_id}
+          </Form.Control.Feedback>
+        </Form.Group>
           <Form.Group as={Row} className="mb-3">
             <Form.Label column sm="4">
               Primer nombre
@@ -64,14 +90,14 @@ const ApliForm = () => {
             <Col sm="8">
               <Form.Control
                 type="text"
-                name="firstName"
-                value={formik.values.firstName}
+                name="name"
+                value={formik.values.name}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                isInvalid={formik.touched.firstName && formik.errors.firstName}
+                isInvalid={formik.touched.name && formik.errors.name}
               />
               <Form.Control.Feedback type="invalid">
-                {formik.errors.firstName}
+                {formik.errors.name}
               </Form.Control.Feedback>
             </Col>
           </Form.Group>
@@ -84,14 +110,14 @@ const ApliForm = () => {
             <Col sm="8">
               <Form.Control
                 type="text"
-                name="lastName"
-                value={formik.values.lastName}
+                name="last_name"
+                value={formik.values.last_name}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                isInvalid={formik.touched.lastName && formik.errors.lastName}
+                isInvalid={formik.touched.last_name && formik.errors.last_name}
               />
               <Form.Control.Feedback type="invalid">
-                {formik.errors.lastName}
+                {formik.errors.last_name}
               </Form.Control.Feedback>
             </Col>
           </Form.Group>
@@ -109,14 +135,14 @@ const ApliForm = () => {
         type="text"
         placeholder="Cedula"
         aria-describedby="inputGroupPrepend"
-        name="cedula"
-        value={formik.values.cedula}
+        name="id_card"
+        value={formik.values.id_card}
         onChange={formik.handleChange}
         onBlur={formik.handleBlur}
-        isInvalid={formik.touched.cedula && formik.errors.cedula}
+        isInvalid={formik.touched.id_card && formik.errors.id_card}
       />
       <Form.Control.Feedback type="invalid">
-        {formik.errors.cedula}
+        {formik.errors.id_card}
       </Form.Control.Feedback>
     </InputGroup>
   </Col>
@@ -150,14 +176,14 @@ const ApliForm = () => {
     <Form.Control
       type="text"
       placeholder="Numero celular"
-      name="phonenumber"
-      value={formik.values.phonenumber}
+      name="phone"
+      value={formik.values.phone}
       onChange={formik.handleChange}
       onBlur={formik.handleBlur}
-      isInvalid={formik.touched.phonenumber && formik.errors.phonenumber}
+      isInvalid={formik.touched.phone && formik.errors.phone}
     />
     <Form.Control.Feedback type="invalid">
-      {formik.errors.phonenumber}
+      {formik.errors.phone}
     </Form.Control.Feedback>
   </Col>
 </Form.Group>
@@ -169,14 +195,14 @@ const ApliForm = () => {
   <Col sm="8">
     <Form.Control
       type="file"
-      name="CV"
+      name="cv"
       onChange={(event) => {
-        formik.setFieldValue('CV', event.currentTarget.files[0]);
+        formik.setFieldValue('cv', event.currentTarget.files[0]);
       }}
-      isInvalid={formik.touched.CV && formik.errors.CV}
+      isInvalid={formik.touched.cv && formik.errors.cv}
     />
     <Form.Control.Feedback type="invalid">
-      {formik.errors.CV}
+      {formik.errors.cv}
     </Form.Control.Feedback>
   </Col>
 </Form.Group>
@@ -229,204 +255,4 @@ const ApliForm = () => {
 
 export default ApliForm;
 
-            
-
-{/* <Form.Group className="position-relative mb-3">
-import Button from 'react-bootstrap/Button';
-import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
-import Row from 'react-bootstrap/Row';
-import { useParams } from 'react-router-dom';
-import * as yup from 'yup';
-import * as formik from 'formik';
-
-
-function ApliForm() {
-  const { Formik } = formik;
-
-const schema = yup.object().shape({
-  firstName: yup.string().required(),
-  lastName: yup.string().required(),
-  cedula: yup.number().required(),
-  email: yup.string().email().required(),
-  phonenumber: yup.number().required(),
-  CV: yup.mixed().required(),
-  certificates: yup.mixed().required(),
-  terms: yup.bool().required().oneOf([true], 'terms must be accepted'),
-});
-  const { id } = useParams();
-  return (
-    <Row className="justify-content-center">
-    <Col md={7}>
-    <Formik
-      validationSchema={schema}
-      onSubmit={console.log}
-      initialValues={{
-        firstName: '',
-        lastName: '',
-        cedula: '',
-        email: '',
-        phonenumber: '',
-        CV: null,
-        certificates: null,
-        terms: false,
-      }}>
-      {({
-        handleSubmit,
-        handleChange,
-        handleBlur,
-        values,
-        touched,
-        isValid,
-        errors,
-      }) => (
-        <Form noValidate onSubmit={handleSubmit}>
-          <Row className="mb-3">
-            <Form.Group
-              as={Col}
-              md="4"
-              controlId="validationFormik101"
-              className="position-relative "
-            >
-              <Form.Label>Primer nombre</Form.Label>
-              <Form.Control
-                type="text"
-                name="firstName"
-                value={values.firstName}
-                onChange={handleChange}
-                isValid={touched.firstName && !errors.firstName}
-              />
-              <Form.Control.Feedback tooltip>Buena suerte!</Form.Control.Feedback>
-            </Form.Group>
-            <Form.Group
-              as={Col}
-              md="4"
-              controlId="validationFormik102"
-              className="position-relative"
-            >
-              <Form.Label>Primer apellido</Form.Label>
-              <Form.Control
-                type="text"
-                name="lastName"
-                value={values.lastName}
-                onChange={handleChange}
-                isValid={touched.lastName && !errors.lastName}
-              />
-
-              <Form.Control.Feedback tooltip>Buena suerte!</Form.Control.Feedback>
-            </Form.Group>
-            <Form.Group as={Col} md="4" co>
-              <Form.Label>Cedula</Form.Label>
-              <InputGroup hasValidation>
-                <InputGroup.Text id="inputGroupPrepend">CC</InputGroup.Text>
-                <Form.Control
-                  type="text"
-                  placeholder="Cedula"
-                  aria-describedby="inputGroupPrepend"
-                  name="cedula"
-                  value={values.cedula}
-                  onChange={handleChange}
-                  isInvalid={!!errors.cedula}
-                />
-                <Form.Control.Feedback type="invalid" tooltip>
-                  {errors.cedula}
-                </Form.Control.Feedback>
-              </InputGroup>
-            </Form.Group>
-          </Row>
-          <Row className="mb-3">
-            <Form.Group
-              as={Col}
-              md="5"
-              controlId="validationFormik103"
-              className="position-relative"
-            >
-              <Form.Label>Email</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Email"
-                name="Email@example.com"
-                value={values.email}
-                onChange={handleChange}
-                isInvalid={!!errors.email}
-              />
-
-              <Form.Control.Feedback type="invalid" tooltip>
-                {errors.email}
-              </Form.Control.Feedback>
-            </Form.Group>
-            <Form.Group
-              as={Col}
-              md="5"
-              controlId="validationFormik104"
-              className="position-relative"
-            >
-              <Form.Label>Numero celular</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Numero celular"
-                name="phonenumber"
-                value={values.phonenumber}
-                onChange={handleChange}
-                isInvalid={!!errors.phonenumber}
-              />
-              <Form.Control.Feedback type="invalid" tooltip>
-                {errors.phonenumber}
-              </Form.Control.Feedback>
-            </Form.Group>
-
-          </Row>
-          <Form.Group className="position-relative mb-3">
-            <Form.Label>Hoja de vida</Form.Label>
-            <Form.Control
-              type="file"
-              required
-              name="CV"
-              onChange={handleChange}
-              isInvalid={!!errors.CV}
-            />
-            <Form.Control.Feedback type="invalid" tooltip>
-              {errors.CV}
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Form.Group className="position-relative mb-3">
-            <Form.Label>Certificados</Form.Label>
-            <Form.Control
-              type="file"
-              name="certificates"
-              onChange={handleChange}
-              isInvalid={!!errors.certificates}
-            />
-            <Form.Control.Feedback type="invalid" tooltip>
-              {errors.certificates}
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Form.Group className="position-relative mb-3">
-            <Form.Check
-              required
-              name="terms"
-              label="Aceptar terminos y condiciones"
-              onChange={handleChange}
-              isInvalid={!!errors.terms}
-              feedback={errors.terms}
-              feedbackType="invalid"
-              id="validationFormik106"
-              feedbackTooltip
-            />
-          </Form.Group>
-          
-          <Button type="submit">Submit form</Button>
-        </Form>
-      )}
-    </Formik>
-    </Col>
-    </Row>
-
-  );
-};
-
-export default ApliForm;
-
-
-*/}
+        

@@ -11,6 +11,7 @@ backend/__pycache__
 backend/.pytest_cache
 backend/instance
 backend/images/*
+backend/ApplicantUploads
 
 .pnp
 .pnp.js

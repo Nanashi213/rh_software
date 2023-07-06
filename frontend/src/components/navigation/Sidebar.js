@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Col, Dropdown, Button,Row} from 'react-bootstrap';
+import { Col, Dropdown, Button} from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 function Sidebar() {
@@ -11,15 +11,6 @@ function Sidebar() {
 
   return (
     <> 
-    {/* 
-    <Row>
-      <Col xs={2} className="d-flex justify-content-center">
-        <Button onClick={toggleSidebar} variant='dark' className='rounded-0'>
-          {isHidden ? "Mostrar Menu" : "Ocultar Menu"}
-        </Button>
-      </Col>
-    </Row>
-    */}
       <Button onClick={toggleSidebar} variant='dark' className='rounded-0'>
           {isHidden ? "Mostrar Menu" : "Ocultar Menu"}
       </Button>
@@ -32,8 +23,8 @@ function Sidebar() {
 
             <Dropdown.Menu className="bg-dark text-white">
               <Dropdown.Item as={Link} to="/main/joboffers" className="text-white">Ofertas de trabajo</Dropdown.Item>
-              <Dropdown.Item as={Link} to="/contratacion" className="text-white">Contratación</Dropdown.Item>
-              <Dropdown.Item as={Link} to="/option1-3" className="text-white">Option 1-3</Dropdown.Item>
+              <Dropdown.Item as={Link} to="/main/candidates" className="text-white">Candidatos</Dropdown.Item>
+              <Dropdown.Item as={Link} to="/main/hiring" className="text-white">Contratación</Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
 

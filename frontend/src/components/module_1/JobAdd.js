@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
+import React, { useState, useContext } from 'react';
+import {Button , Col, Form, Row, InputGroup} from 'react-bootstrap'
 import * as yup from 'yup';
 import { useFormik } from 'formik';
-import InputGroup from 'react-bootstrap/InputGroup';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
+import { TokenContext } from '../../TokenContext.js';
 
 
 const Job_offer_form = () => {
+  const { token } = useContext(TokenContext);
+  const navigate = useNavigate();
   const [validated, setValidated] = useState(false);
 
   const currentDate = new Date();
@@ -48,10 +49,14 @@ const Job_offer_form = () => {
           publication_date: values.publication_date,
           vacancies: values.vacancies,
           salary: values.salary
+        },
+        headers: {
+          Authorization: 'Bearer ' + token
         }
       })
       .then((response) => {
         console.log(response.data);
+        navigate('/main/joboffers');
       }).catch((error) => {
         if (error.response) {
           console.log(error.response)
@@ -64,7 +69,6 @@ const Job_offer_form = () => {
   
   const handleSubmit = (event) => {
     event.preventDefault();
-    formik.handleSubmit(event);
     if (formik.isValid) {
       setValidated(true);
       formik.submitForm();
@@ -74,9 +78,10 @@ const Job_offer_form = () => {
   };
 
   return (
-    <Row className="justify-content-center mt-4">
+    <Row className="justify-content-center">
       <Col md={6}>
-        <Form onSubmit={handleSubmit}>
+      <h1 className='mb-3'>Agregar oferta de trabajo </h1>
+        <Form onSubmit={handleSubmit} noValidate validated={validated}>
           <Form.Group as={Row} className="mb-1">
             <Form.Label column sm="3">
               Titulo

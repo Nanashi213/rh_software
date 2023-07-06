@@ -10,7 +10,6 @@ import LoginF from "../../components/home/Login.js";
 import React,{ useEffect, useState } from "react";
 import axios from "axios";
 import { useLocation, useParams } from 'react-router-dom';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { Container } from "react-bootstrap";
 
 function Home(){
